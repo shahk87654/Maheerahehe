@@ -20,11 +20,20 @@ export function BookPreview({
   productLoading: boolean;
 }) {
   const [currentPage, setCurrentPage] = useState(0);
+  const [turnDirection, setTurnDirection] = useState<1 | -1>(1);
+  const [paperStyle, setPaperStyle] = useState<"ivory" | "lavender" | "night">("ivory");
   const activePage = previewPages[currentPage];
 
   const changePage = (direction: -1 | 1) => {
+    setTurnDirection(direction);
     setCurrentPage((page) => (page + direction + previewPages.length) % previewPages.length);
   };
+
+  const goToPage = (page: number) => {
+    setTurnDirection(page >= currentPage ? 1 : -1);
+    setCurrentPage(page);
+  };
+
   const formatPageNumber = (page: number) => String(page).padStart(2, "0");
 
   return (
@@ -49,22 +58,37 @@ export function BookPreview({
             <span>{bookTitle.toUpperCase()}</span>
             <span>SELECTED PREVIEW</span>
           </div>
-          <div
-            className="preview-page preview-page-prose"
+          <div className={`preview-page preview-page-prose paper-${paperStyle}`}
             aria-label={`Preview page ${formatPageNumber(currentPage + 1)} of ${formatPageNumber(previewPages.length)}`}
             aria-live="polite"
           >
-            <AnimatePresence mode="wait" initial={false}>
+            <span className="preview-page-edge" aria-hidden="true" />
+            <AnimatePresence mode="wait" initial={false} custom={turnDirection}>
               <motion.div
                 className="preview-page-inner"
                 key={currentPage}
-                initial={{ opacity: 0, rotateY: -9, x: 18 }}
-                animate={{ opacity: 1, rotateY: 0, x: 0 }}
-                exit={{ opacity: 0, rotateY: 9, x: -18 }}
-                transition={{ duration: 0.38, ease: "easeInOut" }}
+                custom={turnDirection}
+                variants={{
+                  initial: (direction: 1 | -1) => ({
+                    opacity: 0.65,
+                    rotateY: direction > 0 ? -88 : 88,
+                    x: direction > 0 ? 32 : -32,
+                  }),
+                  animate: { opacity: 1, rotateY: 0, x: 0 },
+                  exit: (direction: 1 | -1) => ({
+                    opacity: 0.65,
+                    rotateY: direction > 0 ? 88 : -88,
+                    x: direction > 0 ? -32 : 32,
+                  }),
+                }}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ duration: 0.56, ease: [0.22, 1, 0.36, 1] }}
                 drag="x"
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.12}
+                whileDrag={{ rotateY: turnDirection > 0 ? -8 : 8 }}
                 onDragEnd={(_, info) => {
                   if (info.offset.x < -70) changePage(1);
                   if (info.offset.x > 70) changePage(-1);
@@ -80,6 +104,31 @@ export function BookPreview({
                 <span className="preview-page-number">{formatPageNumber(currentPage + 1)}</span>
               </motion.div>
             </AnimatePresence>
+          </div>
+          <div className="paper-styles" role="group" aria-label="Choose reading paper">
+            <span>PAPER</span>
+            <button
+              className="paper-swatch paper-swatch-ivory"
+              type="button"
+              aria-label="Warm ivory paper"
+              aria-pressed={paperStyle === "ivory"}
+              onClick={() => setPaperStyle("ivory")}
+            />
+            <button
+              className="paper-swatch paper-swatch-lavender"
+              type="button"
+              aria-label="Lavender paper"
+              aria-pressed={paperStyle === "lavender"}
+              onClick={() => setPaperStyle("lavender")}
+            />
+            <button
+              className="paper-swatch paper-swatch-night"
+              type="button"
+              aria-label="Night paper"
+              aria-pressed={paperStyle === "night"}
+              onClick={() => setPaperStyle("night")}
+            />
+            <span className="paper-style-label">{paperStyle} edition</span>
           </div>
           <div className="preview-controls">
             <button type="button" onClick={() => changePage(-1)} aria-label="Previous preview page">
@@ -110,7 +159,7 @@ export function BookPreview({
                 type="button"
                 aria-label={`Go to preview page ${index + 1}`}
                 aria-current={currentPage === index ? "page" : undefined}
-                onClick={() => setCurrentPage(index)}
+                onClick={() => goToPage(index)}
               />
             ))}
           </div>

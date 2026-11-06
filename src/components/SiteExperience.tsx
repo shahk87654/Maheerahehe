@@ -102,7 +102,10 @@ export function SiteExperience() {
           productError={productError}
           productLoading={!product && !productError}
         />
-        <FeaturedPoetry />
+        <FeaturedPoetry
+          available={product?.available ?? false}
+          productLoading={!product && !productError}
+        />
         <EmotionalJourney />
         <BookPreview
           product={product}

@@ -3,8 +3,15 @@
 import { motion } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
 import { bookTitle } from "@/lib/content";
+import { ShopifyBuyButton } from "@/components/ShopifyBuyButton";
 
-export function FeaturedPoetry() {
+export function FeaturedPoetry({
+  available,
+  productLoading,
+}: {
+  available: boolean;
+  productLoading: boolean;
+}) {
   return (
     <section className="poetry-section" id="the-words" aria-labelledby="poem-title">
       <div className="poetry-grain" aria-hidden="true" />
@@ -45,6 +52,14 @@ export function FeaturedPoetry() {
           >I pray you do”</motion.span>
         </blockquote>
         <cite>— {bookTitle.toUpperCase()}</cite>
+        <div className="poetry-actions">
+          <ShopifyBuyButton
+            className="button button-lime"
+            available={available}
+            productLoading={productLoading}
+          />
+          <a className="poetry-read-link" href="#the-preview">READ A LITTLE MORE ↓</a>
+        </div>
       </Reveal>
       <div className="poetry-footer">
         <span>WORDS TO KEEP CLOSE</span>

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
+import { ShopifyBuyButton } from "@/components/ShopifyBuyButton";
 import type { EbookProductDetails } from "@/lib/shopify";
 
 export function BookIntroduction({
@@ -56,9 +57,16 @@ export function BookIntroduction({
                 : productError || "The book description is currently unavailable."}
             </p>
           )}
-          <a className="text-link dark-link" href="#the-preview">
-            TAKE A CLOSER LOOK <ArrowUpRight size={15} />
-          </a>
+          <div className="intro-actions">
+            <ShopifyBuyButton
+              className="button button-primary"
+              available={product?.available ?? false}
+              productLoading={productLoading}
+            />
+            <a className="text-link dark-link" href="#the-preview">
+              TAKE A CLOSER LOOK <ArrowUpRight size={15} />
+            </a>
+          </div>
         </Reveal>
       </div>
       <div className="intro-endnote">A LITTLE LIGHT, LEFT ON.</div>

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { ArrowDownRight } from "lucide-react";
 import { journey } from "@/lib/content";
 import { Reveal } from "@/components/Reveal";
@@ -20,20 +19,12 @@ export function EmotionalJourney() {
       <div className="journey-cards">
         {journey.map((chapter, index) => (
           <Reveal className={`journey-card journey-${chapter.tone}`} delay={index * 0.09} key={chapter.number}>
-            <Image
-              src={chapter.image}
-              alt={chapter.alt}
-              fill
-              sizes="(max-width: 760px) 100vw, 33vw"
-              quality={80}
-            />
-            <div className="journey-card-shade" />
             <div className="journey-card-top">
               <span>{chapter.number} / 03</span>
               <ArrowDownRight size={18} strokeWidth={1.3} />
             </div>
             <div className="journey-card-copy">
-              <span className="eyebrow">AN ACT OF THE HEART</span>
+              <span className="eyebrow">CHAPTER {chapter.number}</span>
               <h3>{chapter.title}</h3>
               <p>{chapter.description}</p>
             </div>
@@ -41,6 +32,9 @@ export function EmotionalJourney() {
         ))}
       </div>
       <div className="journey-footnote">FROM WHAT HURT, TOWARD WHAT HEALS.</div>
+      <a className="journey-preview-link" href="#the-preview">
+        TURN A FEW PAGES <ArrowDownRight size={16} aria-hidden="true" />
+      </a>
     </section>
   );
 }

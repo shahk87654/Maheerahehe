@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { images } from "@/lib/content";
 import { ShopifyBuyButton } from "@/components/ShopifyBuyButton";
 import { Reveal } from "@/components/Reveal";
 import type { EbookProductDetails } from "@/lib/shopify";
@@ -15,17 +14,6 @@ export function FinalCTA({
 }) {
   return (
     <section className="final-cta" id="purchase" aria-labelledby="final-cta-title">
-      <Image
-        className="final-cta-background"
-        src={images.healing}
-        alt=""
-        fill
-        sizes="100vw"
-        quality={80}
-      />
-      <div className="final-cta-shade" />
-      <span className="final-cta-orbit final-cta-orbit-one" aria-hidden="true" />
-      <span className="final-cta-orbit final-cta-orbit-two" aria-hidden="true" />
       <div className="final-cta-layout">
         <Reveal className="final-cta-content">
           <p className="eyebrow final-cta-eyebrow">

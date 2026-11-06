@@ -21,6 +21,7 @@ export function Navigation({
 }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
 
   useEffect(() => {
     const updateScroll = () => setScrolled(window.scrollY > 32);
@@ -30,24 +31,52 @@ export function Navigation({
   }, []);
 
   useEffect(() => {
+    const sections = links
+      .map((link) => document.querySelector<HTMLElement>(link.href))
+      .filter((section): section is HTMLElement => section !== null);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleSections = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visibleSections[0]) {
+          setActiveSection(`#${visibleSections[0].target.id}`);
+        }
+      },
+      { rootMargin: "-25% 0px -60% 0px", threshold: [0, 0.2, 0.5] },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     document.body.classList.toggle("menu-open", menuOpen);
     return () => document.body.classList.remove("menu-open");
   }, [menuOpen]);
 
   return (
-    <header className={`site-nav${scrolled ? " is-scrolled" : ""}`}>
+    <header className={`site-nav${scrolled ? " is-scrolled" : ""}${menuOpen ? " menu-is-open" : ""}`}>
       <a
         className="nav-brand"
         href="#home"
         aria-label={`${bookTitle}, home`}
         onClick={() => setMenuOpen(false)}
       >
-        UNSENT <span>UNKIND</span>
+        <span className="nav-brand-mark" aria-hidden="true">U.</span>
+        <span className="nav-brand-copy">
+          <strong>UNSENT <span>UNKIND</span></strong>
+          <small>MAHEERA BURHAN</small>
+        </span>
       </a>
 
       <nav className="nav-links" aria-label="Main navigation">
         {links.map((link) => (
-          <a key={link.href} href={link.href}>
+          <a
+            key={link.href}
+            href={link.href}
+            aria-current={activeSection === link.href ? "location" : undefined}
+          >
             {link.label}
           </a>
         ))}
@@ -86,6 +115,7 @@ export function Navigation({
                 key={link.href}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
+                aria-current={activeSection === link.href ? "location" : undefined}
               >
                 {link.label}
               </a>
